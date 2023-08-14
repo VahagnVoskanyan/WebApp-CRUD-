@@ -1,0 +1,39 @@
+﻿@page
+@using System.Data.SqlClient;
+
+@{
+    string errorMessage = "";
+    try
+    {
+        string id = Request.Query["id"];
+
+        string connectionString = "Data Source=DESKTOP-3PP87AK;Initial Catalog=MyStore;Integrated Security=True";
+        using (SqlConnection connection = new SqlConnection(connectionString))
+        {
+            connection.Open();
+
+            string sql = "DELETE FROM clients WHERE id=@id";
+            using (SqlCommand command = new SqlCommand(sql, connection))
+            {
+                command.Parameters.AddWithValue("id", id);
+
+                command.ExecuteNonQuery();
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        errorMessage = ex.Message;
+        return;
+    }
+
+    Response.Redirect("/Clients/Index");
+}
+
+@if (errorMessage.Length > 0)
+{
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong>@errorMessage</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
